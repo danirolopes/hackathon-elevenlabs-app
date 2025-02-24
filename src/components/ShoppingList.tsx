@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Trash2, Plus } from "lucide-react";
+import { Loader2, Check, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -58,14 +58,14 @@ export const ShoppingList = () => {
       setIngredients(ingredients.filter(ing => ing.id !== id));
       toast({
         title: "Success",
-        description: "Item removed from shopping list"
+        description: "Item marked as completed"
       });
     } catch (error) {
       console.error('Error removing ingredient:', error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Could not remove item"
+        description: "Could not complete item"
       });
     }
   };
@@ -144,10 +144,10 @@ export const ShoppingList = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                  className="h-8 w-8 text-green-500 hover:text-green-700 hover:bg-green-50"
                   onClick={() => removeIngredient(ingredient.id)}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Check className="h-4 w-4" />
                 </Button>
               </li>
             ))}
