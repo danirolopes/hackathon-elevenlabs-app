@@ -1,69 +1,20 @@
-# Welcome to your Lovable project
+# Personal Chef AI [Frontend/Chat]
+
+*The project was developed for the ElevenLabs Hackathon. You can learn more about the platform and its events on the homepage: [ElevenLabs](https://elevenlabs.io/).*
+
+Page created using [Lovable](https://lovable.dev/), a platform for building interactive AI-driven experiences.
+
+The front-end serves as the interface to communicate with the back-end, integrating services like ElevenLabs, Supabase, and others.
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/f9aebae3-583b-4f70-8061-a077f65ae4d9
+**URL**: [https://preview--friendly-agent-mind.lovable.app/](https://preview--friendly-agent-mind.lovable.app/)
 
-## How can I edit this code?
+## Tecnical Repositories
 
-There are several ways of editing your application.
+- [Backend Repository](https://github.com/danirolopes/hackathon-elevenlabs);
+- [Landing Page - Frontend Repository](https://github.com/luizbastos08/chefai-gourmet-guide);
 
-**Use Lovable**
+## Documentation
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f9aebae3-583b-4f70-8061-a077f65ae4d9) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/f9aebae3-583b-4f70-8061-a077f65ae4d9) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+- [Personal Chef AI - Google Docs](https://docs.google.com/document/d/1bS1g4IH6jc4YABNV-UAKsNIr8cAmDwac6D5mz32FhR4/edit?usp=sharing)
