@@ -6,7 +6,7 @@ import { Pantry } from "@/components/Pantry";
 import { useState } from "react";
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState<'pantry' | 'cook' | 'shopping'>('shopping');
+  const [currentView, setCurrentView] = useState<'pantry' | 'cook' | 'shopping'>('cook');
 
   const renderView = () => {
     switch (currentView) {
