@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Trash2, Plus } from "lucide-react";
+import { Loader2, Trash2, Plus, Camera } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +17,7 @@ interface PantryIngredient {
 export const Pantry = () => {
   const [ingredients, setIngredients] = useState<PantryIngredient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [newIngredient, setNewIngredient] = useState("");
   const { toast } = useToast();
 
@@ -102,6 +103,46 @@ export const Pantry = () => {
     }
   };
 
+  const processPhotoInventory = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsProcessing(true);
+    try {
+      // Convert the file to base64
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64String = (reader.result as string).split(',')[1];
+        
+        // Call the Supabase Edge Function
+        const { data, error } = await supabase.functions.invoke('process-food-inventory', {
+          body: { image: base64String }
+        });
+
+        if (error) throw error;
+
+        // Refresh the ingredients list
+        await fetchPantryIngredients();
+        
+        toast({
+          title: "Success",
+          description: "Photo processed successfully"
+        });
+      };
+      
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error processing photo:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not process photo"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
@@ -112,8 +153,25 @@ export const Pantry = () => {
 
   return (
     <Card className="mx-4 mt-4">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle>My Pantry</CardTitle>
+        <div className="relative">
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={processPhotoInventory}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            disabled={isProcessing}
+          />
+          <Button size="icon" variant="outline" disabled={isProcessing}>
+            {isProcessing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Camera className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={addIngredient} className="flex gap-2 mb-4">
