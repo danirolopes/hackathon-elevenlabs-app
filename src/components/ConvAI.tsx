@@ -38,13 +38,14 @@ export function ConvAI() {
       }
 
       const clientTools = {
-        getCustomerDetails: async () => {
+        getCustomerDetails: async (parameters: any): Promise<string> => {
           const customerData = {
             id: 123,
             name: "Alice",
             subscription: "Pro"
           };
-          return customerData;
+          // Convert the object to a string that the agent can understand
+          return `Customer ID: ${customerData.id}, Name: ${customerData.name}, Subscription: ${customerData.subscription}`;
         }
       };
 
