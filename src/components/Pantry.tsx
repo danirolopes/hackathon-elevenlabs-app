@@ -141,7 +141,10 @@ export const Pantry = () => {
             step="0.1"
             className="w-24"
           />
-          <Select value={selectedUnit} onValueChange={setSelectedUnit}>
+          <Select 
+            value={selectedUnit} 
+            onValueChange={(value: UnitType) => setSelectedUnit(value)}
+          >
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
