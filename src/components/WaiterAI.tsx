@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Conversation } from "@11labs/client";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 async function requestMicrophonePermission() {
   try {
@@ -43,12 +44,35 @@ export function WaiterAI({ onOrderComplete }: WaiterAIProps) {
 
       const clientTools = {
         completeOrder: async (parameters: any): Promise<string> => {
-          if (conversation) {
-            await conversation.endSession();
-            setConversation(null);
+          const { recipe_name, ingredients, steps } = parameters;
+          
+          try {
+            // Call the generate-graph edge function
+            const { data, error } = await supabase.functions.invoke('generate-graph', {
+              body: {
+                recipe_name,
+                ingredients,
+                steps
+              }
+            });
+
+            if (error) {
+              console.error('Error generating graph:', error);
+            } else {
+              console.log('Graph generated successfully:', data);
+            }
+
+            // End the conversation and transition to chef
+            if (conversation) {
+              await conversation.endSession();
+              setConversation(null);
+            }
+            onOrderComplete();
+            return "Order completed, handing over to the chef";
+          } catch (error) {
+            console.error('Error in completeOrder:', error);
+            throw error;
           }
-          onOrderComplete();
-          return "Order completed, handing over to the chef";
         }
       };
 
