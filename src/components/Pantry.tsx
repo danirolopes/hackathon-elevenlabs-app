@@ -8,21 +8,23 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+type UnitType = 'grams' | 'kilograms' | 'milliliters' | 'liters' | 'units' | 'teaspoons' | 'tablespoons' | 'cups';
+
 interface PantryIngredient {
   id: string;
   ingredient_name: string;
   quantity: number;
-  unit: string;
+  unit: UnitType;
 }
 
-const units = ['units', 'grams', 'kilograms', 'milliliters', 'liters', 'teaspoons', 'tablespoons', 'cups'];
+const units: UnitType[] = ['units', 'grams', 'kilograms', 'milliliters', 'liters', 'teaspoons', 'tablespoons', 'cups'];
 
 export const Pantry = () => {
   const [ingredients, setIngredients] = useState<PantryIngredient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newIngredient, setNewIngredient] = useState("");
   const [newQuantity, setNewQuantity] = useState("1");
-  const [selectedUnit, setSelectedUnit] = useState("units");
+  const [selectedUnit, setSelectedUnit] = useState<UnitType>("units");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -81,13 +83,11 @@ export const Pantry = () => {
     try {
       const { data, error } = await supabase
         .from('pantry_ingredients')
-        .insert([
-          {
-            ingredient_name: newIngredient.trim(),
-            quantity: parseFloat(newQuantity),
-            unit: selectedUnit
-          }
-        ])
+        .insert({
+          ingredient_name: newIngredient.trim(),
+          quantity: parseFloat(newQuantity),
+          unit: selectedUnit
+        })
         .select()
         .single();
 
