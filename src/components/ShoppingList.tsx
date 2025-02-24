@@ -1,10 +1,11 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, Trash2, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
 interface MissingIngredient {
   id: string;
@@ -16,6 +17,7 @@ interface MissingIngredient {
 export const ShoppingList = () => {
   const [ingredients, setIngredients] = useState<MissingIngredient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [newIngredient, setNewIngredient] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -68,6 +70,40 @@ export const ShoppingList = () => {
     }
   };
 
+  const addIngredient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newIngredient.trim()) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('missing_ingredients')
+        .insert([
+          {
+            ingredient_name: newIngredient.trim(),
+            status: 'needed'
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setIngredients([data, ...ingredients]);
+      setNewIngredient("");
+      toast({
+        title: "Success",
+        description: "Item added to shopping list"
+      });
+    } catch (error) {
+      console.error('Error adding ingredient:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not add item"
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
@@ -82,6 +118,19 @@ export const ShoppingList = () => {
         <CardTitle>Shopping List</CardTitle>
       </CardHeader>
       <CardContent>
+        <form onSubmit={addIngredient} className="flex gap-2 mb-4">
+          <Input
+            type="text"
+            placeholder="Add new item..."
+            value={newIngredient}
+            onChange={(e) => setNewIngredient(e.target.value)}
+            className="flex-1"
+          />
+          <Button type="submit" size="icon">
+            <Plus className="h-4 w-4" />
+          </Button>
+        </form>
+        
         {ingredients.length === 0 ? (
           <p className="text-center text-gray-500">No ingredients needed</p>
         ) : (
