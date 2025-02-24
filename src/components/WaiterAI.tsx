@@ -43,6 +43,10 @@ export function WaiterAI({ onOrderComplete }: WaiterAIProps) {
 
       const clientTools = {
         completeOrder: async (parameters: any): Promise<string> => {
+          if (conversation) {
+            await conversation.endSession();
+            setConversation(null);
+          }
           onOrderComplete();
           return "Order completed, handing over to the chef";
         }
