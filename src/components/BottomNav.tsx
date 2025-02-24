@@ -22,26 +22,31 @@ const NavItem = ({ icon, label, isActive, onClick }: NavItemProps) => (
   </button>
 );
 
-export const BottomNav = () => {
+interface BottomNavProps {
+  currentView: 'pantry' | 'cook' | 'shopping';
+  onViewChange: (view: 'pantry' | 'cook' | 'shopping') => void;
+}
+
+export const BottomNav = ({ currentView, onViewChange }: BottomNavProps) => {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center px-4 pb-safe">
       <NavItem
         icon={<ShoppingBasket className="w-6 h-6" />}
         label="My Pantry"
-        isActive={true}
-        onClick={() => {}}
+        isActive={currentView === 'pantry'}
+        onClick={() => onViewChange('pantry')}
       />
       <NavItem
         icon={<CookingPot className="w-6 h-6" />}
         label="Cook Now"
-        isActive={false}
-        onClick={() => {}}
+        isActive={currentView === 'cook'}
+        onClick={() => onViewChange('cook')}
       />
       <NavItem
         icon={<List className="w-6 h-6" />}
         label="Shopping List"
-        isActive={false}
-        onClick={() => {}}
+        isActive={currentView === 'shopping'}
+        onClick={() => onViewChange('shopping')}
       />
     </div>
   );
