@@ -1,5 +1,6 @@
 
 import { ConvAI } from "@/components/ConvAI";
+import { WaiterAI } from "@/components/WaiterAI";
 import { BottomNav } from "@/components/BottomNav";
 import { ShoppingList } from "@/components/ShoppingList";
 import { Pantry } from "@/components/Pantry";
@@ -7,17 +8,25 @@ import { useState } from "react";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<'pantry' | 'cook' | 'shopping'>('cook');
+  const [showChef, setShowChef] = useState(false);
+
+  const renderCookView = () => {
+    if (showChef) {
+      return <ConvAI />;
+    }
+    return <WaiterAI onOrderComplete={() => setShowChef(true)} />;
+  };
 
   const renderView = () => {
     switch (currentView) {
       case 'pantry':
         return <Pantry />;
       case 'cook':
-        return <ConvAI />;
+        return renderCookView();
       case 'shopping':
         return <ShoppingList />;
       default:
-        return <ConvAI />;
+        return renderCookView();
     }
   };
 
@@ -28,7 +37,10 @@ const Index = () => {
       </div>
       <BottomNav 
         currentView={currentView}
-        onViewChange={(view) => setCurrentView(view)}
+        onViewChange={(view) => {
+          setCurrentView(view);
+          setShowChef(false); // Reset to waiter when changing views
+        }}
       />
     </div>
   );
