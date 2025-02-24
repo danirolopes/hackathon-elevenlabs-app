@@ -6,25 +6,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-type UnitType = 'grams' | 'kilograms' | 'milliliters' | 'liters' | 'units' | 'teaspoons' | 'tablespoons' | 'cups';
 
 interface PantryIngredient {
   id: string;
   ingredient_name: string;
   quantity: number;
-  unit: UnitType;
+  unit: string;
 }
-
-const units: UnitType[] = ['units', 'grams', 'kilograms', 'milliliters', 'liters', 'teaspoons', 'tablespoons', 'cups'];
 
 export const Pantry = () => {
   const [ingredients, setIngredients] = useState<PantryIngredient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newIngredient, setNewIngredient] = useState("");
-  const [newQuantity, setNewQuantity] = useState("1");
-  const [selectedUnit, setSelectedUnit] = useState<UnitType>("units");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -78,15 +71,15 @@ export const Pantry = () => {
 
   const addIngredient = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newIngredient.trim() || !newQuantity) return;
+    if (!newIngredient.trim()) return;
 
     try {
       const { data, error } = await supabase
         .from('pantry_ingredients')
         .insert({
           ingredient_name: newIngredient.trim(),
-          quantity: parseFloat(newQuantity),
-          unit: selectedUnit
+          quantity: 1,
+          unit: 'units'
         })
         .select()
         .single();
@@ -95,8 +88,6 @@ export const Pantry = () => {
 
       setIngredients([data, ...ingredients]);
       setNewIngredient("");
-      setNewQuantity("1");
-      setSelectedUnit("units");
       toast({
         title: "Success",
         description: "Ingredient added to pantry"
@@ -133,29 +124,6 @@ export const Pantry = () => {
             onChange={(e) => setNewIngredient(e.target.value)}
             className="flex-1"
           />
-          <Input
-            type="number"
-            value={newQuantity}
-            onChange={(e) => setNewQuantity(e.target.value)}
-            min="0"
-            step="0.1"
-            className="w-24"
-          />
-          <Select 
-            value={selectedUnit} 
-            onValueChange={(value: UnitType) => setSelectedUnit(value)}
-          >
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {units.map((unit) => (
-                <SelectItem key={unit} value={unit}>
-                  {unit}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <Button type="submit" size="icon">
             <Plus className="h-4 w-4" />
           </Button>
@@ -171,7 +139,7 @@ export const Pantry = () => {
                 className="flex items-center justify-between py-2 border-b last:border-b-0"
               >
                 <span className="flex-1">
-                  {ingredient.ingredient_name} - {ingredient.quantity} {ingredient.unit}
+                  {ingredient.ingredient_name}
                 </span>
                 <Button
                   variant="ghost"
