@@ -1,67 +1,95 @@
+"use client";
 
-import { useEffect, useState } from "react";
-import { useConversation } from "@11labs/react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { Mic } from "lucide-react";
-
-export const ConvAI = () => {
-  const { toast } = useToast();
-  const conversation = useConversation({
-    clientTools: {
-      showAlert: (parameters: { message: string }) => {
-        toast({
-          title: "Chef's Note",
-          description: parameters.message
-        });
-        return "Alert shown successfully";
-      }
-    }
-  });
+import * as React from "react";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Conversation } from "@11labs/client";
+import { cn } from "@/lib/utils";
+async function requestMicrophonePermission() {
+  try {
+    await navigator.mediaDevices.getUserMedia({
+      audio: true
+    });
+    return true;
+  } catch {
+    console.error('Microphone permission denied');
+    return false;
+  }
+}
+export function ConvAI() {
+  const [conversation, setConversation] = useState<Conversation | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  async function startConversation() {
+    if (isLoading) return; // Prevent double-clicks
 
-  useEffect(() => {
-    const initConversation = async () => {
-      try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
-        await conversation.startSession({
-          agentId: "abDDQkj2EPM0DhZoh85K"
-        });
-        setIsConnected(true);
-      } catch (error) {
-        console.error("Error starting conversation:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not start conversation. Please make sure you have granted microphone access."
-        });
+    setIsLoading(true);
+    try {
+      const hasPermission = await requestMicrophonePermission();
+      if (!hasPermission) {
+        alert("No permission");
+        return;
       }
-    };
+      const conversation = await Conversation.startSession({
+        agentId: "abDDQkj2EPM0DhZoh85K",
+        onConnect: () => {
+          setIsConnected(true);
+          setIsSpeaking(true);
+        },
+        onDisconnect: () => {
+          setIsConnected(false);
+          setIsSpeaking(false);
+        },
+        onError: error => {
+          console.log(error);
+          alert('An error occurred during the conversation');
+        },
+        onModeChange: ({
+          mode
+        }) => {
+          setIsSpeaking(mode === 'speaking');
+        }
+      });
+      setConversation(conversation);
+    } catch (error) {
+      console.error('Error starting conversation:', error);
+      alert('Failed to start conversation');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+  async function endConversation() {
+    if (!conversation) {
+      return;
+    }
+    await conversation.endSession();
+    setConversation(null);
+  }
+  return <div className={"flex justify-center items-center gap-x-4 min-h-screen"}>
+      <Card className={'rounded-3xl'}>
+        <CardContent>
+          <CardHeader>
+            <CardTitle className={'text-center text-xl font-bold'}>
+              Personal Chef AI
+            </CardTitle>
+          </CardHeader>
+          <div className={'flex flex-col gap-y-4 text-center'}>
+            <div className={cn('orb my-8 mx-12', isSpeaking ? 'animate-orb' : conversation && 'animate-orb-slow', isConnected ? 'orb-active' : 'orb-inactive')}></div>
 
-    initConversation();
+            <p className="text-sm text-gray-500 -mt-4 mb-2 py-[10px]">
+              {isConnected ? isSpeaking ? "Agent is speaking" : "Agent is listening" : "Disconnected"}
+            </p>
 
-    return () => {
-      conversation.endSession();
-    };
-  }, [conversation]);
-
-  return (
-    <Card className="mx-4 mt-4">
-      <CardContent className="pt-6">
-        <div className="flex flex-col items-center justify-center gap-4">
-          <Button 
-            variant={isConnected ? "outline" : "default"}
-            size="icon"
-            className="h-16 w-16 rounded-full"
-          >
-            <Mic className={`h-8 w-8 ${isConnected ? 'text-green-500' : ''}`} />
-          </Button>
-          <p className="text-sm text-gray-500">
-            {isConnected ? "I'm listening..." : "Connecting..."}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+            <Button variant={'outline'} className={'rounded-full'} size={"lg"} disabled={isLoading || conversation !== null && isConnected} onClick={startConversation}>
+              {isLoading ? 'Starting...' : 'Start conversation'}
+            </Button>
+            <Button variant={'outline'} className={'rounded-full'} size={"lg"} disabled={conversation === null && !isConnected} onClick={endConversation}>
+              End conversation
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>;
+}
