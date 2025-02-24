@@ -45,6 +45,7 @@ export function ConvAI() {
             subscription: "Pro"
           };
           // Convert the object to a string that the agent can understand
+          console.log(customerData)
           return `Customer ID: ${customerData.id}, Name: ${customerData.name}, Subscription: ${customerData.subscription}`;
         }
       };
