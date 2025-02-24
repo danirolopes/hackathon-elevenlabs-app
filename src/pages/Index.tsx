@@ -2,6 +2,7 @@
 import { ConvAI } from "@/components/ConvAI";
 import { BottomNav } from "@/components/BottomNav";
 import { ShoppingList } from "@/components/ShoppingList";
+import { Pantry } from "@/components/Pantry";
 import { useState } from "react";
 
 const Index = () => {
@@ -10,7 +11,7 @@ const Index = () => {
   const renderView = () => {
     switch (currentView) {
       case 'pantry':
-        return <ConvAI />;
+        return <Pantry />;
       case 'cook':
         return <ConvAI />;
       case 'shopping':
