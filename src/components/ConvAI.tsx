@@ -22,33 +22,44 @@ export function ConvAI() {
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   async function startConversation() {
-    const hasPermission = await requestMicrophonePermission()
-    if (!hasPermission) {
-      alert("No permission")
-      return;
-    }
+    if (isLoading) return; // Prevent double-clicks
     
-    const conversation = await Conversation.startSession({
-      agentId: "abDDQkj2EPM0DhZoh85K",
-      onConnect: () => {
-        setIsConnected(true)
-        setIsSpeaking(true)
-      },
-      onDisconnect: () => {
-        setIsConnected(false)
-        setIsSpeaking(false)
-      },
-      onError: (error) => {
-        console.log(error)
-        alert('An error occurred during the conversation')
-      },
-      onModeChange: ({ mode }) => {
-        setIsSpeaking(mode === 'speaking')
-      },
-    })
-    setConversation(conversation)
+    setIsLoading(true);
+    try {
+      const hasPermission = await requestMicrophonePermission()
+      if (!hasPermission) {
+        alert("No permission")
+        return;
+      }
+      
+      const conversation = await Conversation.startSession({
+        agentId: "abDDQkj2EPM0DhZoh85K",
+        onConnect: () => {
+          setIsConnected(true)
+          setIsSpeaking(true)
+        },
+        onDisconnect: () => {
+          setIsConnected(false)
+          setIsSpeaking(false)
+        },
+        onError: (error) => {
+          console.log(error)
+          alert('An error occurred during the conversation')
+        },
+        onModeChange: ({ mode }) => {
+          setIsSpeaking(mode === 'speaking')
+        },
+      })
+      setConversation(conversation)
+    } catch (error) {
+      console.error('Error starting conversation:', error)
+      alert('Failed to start conversation')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   async function endConversation() {
@@ -82,10 +93,10 @@ export function ConvAI() {
               variant={'outline'}
               className={'rounded-full'}
               size={"lg"}
-              disabled={conversation !== null && isConnected}
+              disabled={isLoading || (conversation !== null && isConnected)}
               onClick={startConversation}
             >
-              Start conversation
+              {isLoading ? 'Starting...' : 'Start conversation'}
             </Button>
             <Button
               variant={'outline'}
