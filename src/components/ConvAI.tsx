@@ -75,19 +75,23 @@ export function ConvAI() {
       <Card className={'rounded-3xl'}>
         <CardContent>
           <CardHeader>
-            <CardTitle className={'text-center'}>
-              {isConnected ? (
-                isSpeaking ? `Agent is speaking` : 'Agent is listening'
-              ) : (
-                'Disconnected'
-              )}
+            <CardTitle className={'text-center text-xl font-bold'}>
+              Personal Chef AI
             </CardTitle>
           </CardHeader>
           <div className={'flex flex-col gap-y-4 text-center'}>
-            <div className={cn('orb my-16 mx-12',
+            <div className={cn('orb my-8 mx-12',
               isSpeaking ? 'animate-orb' : (conversation && 'animate-orb-slow'),
               isConnected ? 'orb-active' : 'orb-inactive')}
             ></div>
+
+            <p className="text-sm text-gray-500 -mt-4 mb-2">
+              {isConnected ? (
+                isSpeaking ? "Agent is speaking" : "Agent is listening"
+              ) : (
+                "Disconnected"
+              )}
+            </p>
 
             <Button
               variant={'outline'}
