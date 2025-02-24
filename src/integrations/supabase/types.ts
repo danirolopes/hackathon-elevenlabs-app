@@ -33,6 +33,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pantry_ingredients: {
+        Row: {
+          created_at: string
+          id: string
+          ingredient_name: string
+          quantity: number
+          unit: Database["public"]["Enums"]["unit_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ingredient_name: string
+          quantity?: number
+          unit?: Database["public"]["Enums"]["unit_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ingredient_name?: string
+          quantity?: number
+          unit?: Database["public"]["Enums"]["unit_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       recipe_steps: {
         Row: {
           actual_end_time: string | null
@@ -423,6 +450,15 @@ export type Database = {
         | "in_progress"
         | "ready_to_finish"
         | "finished"
+      unit_type:
+        | "grams"
+        | "kilograms"
+        | "milliliters"
+        | "liters"
+        | "units"
+        | "teaspoons"
+        | "tablespoons"
+        | "cups"
     }
     CompositeTypes: {
       [_ in never]: never
