@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Conversation } from "@11labs/client";
 import { cn } from "@/lib/utils";
+
 async function requestMicrophonePermission() {
   try {
     await navigator.mediaDevices.getUserMedia({
@@ -17,11 +19,13 @@ async function requestMicrophonePermission() {
     return false;
   }
 }
+
 export function ConvAI() {
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   async function startConversation() {
     if (isLoading) return; // Prevent double-clicks
 
@@ -32,8 +36,21 @@ export function ConvAI() {
         alert("No permission");
         return;
       }
+
+      const clientTools = {
+        getCustomerDetails: async () => {
+          const customerData = {
+            id: 123,
+            name: "Alice",
+            subscription: "Pro"
+          };
+          return customerData;
+        }
+      };
+
       const conversation = await Conversation.startSession({
         agentId: "abDDQkj2EPM0DhZoh85K",
+        clientTools,
         onConnect: () => {
           setIsConnected(true);
           setIsSpeaking(true);
@@ -60,6 +77,7 @@ export function ConvAI() {
       setIsLoading(false);
     }
   }
+
   async function endConversation() {
     if (!conversation) {
       return;
@@ -67,6 +85,7 @@ export function ConvAI() {
     await conversation.endSession();
     setConversation(null);
   }
+
   return <div className={"flex justify-center items-center gap-x-4 min-h-screen"}>
       <Card className={'rounded-3xl'}>
         <CardContent>
